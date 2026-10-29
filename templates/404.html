@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 | صفحه پیدا نشد</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: #0b0b0d;
+            color: #f5f5f5;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        .error-container {
+            width: 100%;
+            max-width: 650px;
+            padding: 55px 30px;
+            text-align: center;
+            background: linear-gradient(145deg, #171719, #101012);
+            border: 1px solid #392719;
+            border-radius: 24px;
+            box-shadow: 0 0 60px rgba(255, 134, 23, 0.05);
+        }
+
+        .error-code {
+            font-size: clamp(100px, 22vw, 180px);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -8px;
+            color: #ff8617;
+            text-shadow: 0 0 35px rgba(255, 134, 23, 0.2);
+        }
+
+        .error-title {
+            margin-top: 25px;
+            font-size: 25px;
+        }
+
+        .error-description {
+            margin: 18px auto 30px;
+            max-width: 420px;
+            color: #999;
+            font-size: 14px;
+            line-height: 2.2;
+        }
+
+        .home-button {
+            display: inline-block;
+            padding: 14px 28px;
+            border: 1px solid #ff8617;
+            border-radius: 12px;
+            background: #ff8617;
+            color: #111;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.25s ease;
+        }
+
+        .home-button:hover {
+            background: transparent;
+            color: #ff8617;
+            box-shadow: 0 0 25px rgba(255, 134, 23, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .error-footer {
+            margin-top: 35px;
+            color: #555;
+            font-size: 11px;
+            direction: ltr;
+        }
+
+        @media (max-width: 480px) {
+            .error-container {
+                padding: 45px 20px;
+            }
+
+            .error-title {
+                font-size: 21px;
+            }
+
+            .error-description {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="error-container">
+        <div class="error-code">404</div>
+
+        <h1 class="error-title">صفحه پیدا نشد!</h1>
+
+        <p class="error-description">
+            انگار این صفحه وجود نداره یا آدرسش تغییر کرده.
+            آدرس رو بررسی کن یا برگرد به صفحه اصلی.
+        </p>
+
+        <a href="/" class="home-button">
+            بازگشت به صفحه اصلی
+        </a>
+
+        <div class="error-footer">
+            DOROST SANJ &bull; ERROR 404
+        </div>
+    </main>
+</body>
+</html>

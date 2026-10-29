@@ -1,0 +1,2586 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DorostSanj | درست‌سنج</title>
+
+ 
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <style>
+
+    :root, html[data-theme="dark"] {
+      --bg-base: #0b0b0f;
+      --bg-grid: rgba(255, 255, 255, 0.025);
+      --panel-bg: #14141b;
+      --panel-bg-elevated: #1b1b24;
+      --panel-border: rgba(255, 255, 255, 0.085);
+      --panel-border-hover: rgba(255, 134, 23, 0.48);
+      --text-main: #f5f6f8;
+      --text-muted: rgba(245, 246, 248, 0.58);
+      --text-soft: rgba(245, 246, 248, 0.82);
+      --accent: #ff8617;
+      --accent-soft: rgba(255, 134, 23, 0.14);
+      --topbar-bg: rgba(18, 18, 25, 0.88);
+      --chip-bg: rgba(255, 255, 255, 0.045);
+      --chip-border: rgba(255, 255, 255, 0.1);
+      --table-row-bg: #191922;
+      --table-row-hover: #21212d;
+      --chart-grid: rgba(255, 255, 255, 0.07);
+      --chart-text: rgba(255, 255, 255, 0.6);
+      --shadow-card: 0 18px 40px -15px rgba(0, 0, 0, 0.65);
+  
+      --spotlight-gradient: radial-gradient(
+        560px circle at var(--mouse-x, 50vw) var(--mouse-y, 50vh),
+        rgba(255, 255, 255, 0.095),
+        rgba(255, 134, 23, 0.045) 38%,
+        transparent 75%
+      );
+    }
+
+    html[data-theme="light"] {
+      --bg-base: #f2f4f8;
+      --bg-grid: rgba(15, 23, 42, 0.035);
+      --panel-bg: #ffffff;
+      --panel-bg-elevated: #f8fafc;
+      --panel-border: rgba(15, 23, 42, 0.1);
+      --panel-border-hover: rgba(255, 120, 10, 0.55);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-soft: #334155;
+      --accent: #ea6c00;
+      --accent-soft: rgba(234, 108, 0, 0.12);
+      --topbar-bg: rgba(255, 255, 255, 0.9);
+      --chip-bg: #f1f5f9;
+      --chip-border: rgba(15, 23, 42, 0.1);
+      --table-row-bg: #f8fafc;
+      --table-row-hover: #fff3e6;
+      --chart-grid: rgba(15, 23, 42, 0.08);
+      --chart-text: #475569;
+      --shadow-card: 0 16px 36px -12px rgba(15, 23, 42, 0.09);
+      --spotlight-gradient: radial-gradient(
+        560px circle at var(--mouse-x, 50vw) var(--mouse-y, 50vh),
+        rgba(15, 23, 42, 0.13),
+        rgba(15, 23, 42, 0.05) 42%,
+        transparent 75%
+      );
+    }
+
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: var(--bg-base) !important;
+      color: var(--text-main) !important;
+      font-family: "Vazirmatn", "Inter", system-ui, -apple-system, sans-serif;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+
+    .ambient {
+      display: none !important;
+    }
+
+    .bg-canvas-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-color: var(--bg-base);
+      background-image:
+        linear-gradient(to right, var(--bg-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--bg-grid) 1px, transparent 1px);
+      background-size: 42px 42px;
+      transition: background-color 0.35s ease;
+    }
+
+    .mouse-spotlight-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: var(--spotlight-gradient);
+      transition: opacity 0.2s ease;
+    }
+
+   
+    .panel, .stat-card, .story-card {
+      background: var(--panel-bg) !important;
+      border: 1px solid var(--panel-border) !important;
+      box-shadow: var(--shadow-card) !important;
+      color: var(--text-main) !important;
+      border-radius: 20px;
+      position: relative;
+      z-index: 3;
+      transition: background-color 0.35s ease, border-color 0.35s ease, transform 0.3s ease;
+    }
+
+
+    h1, h2, h3, h4, strong,
+    .stat-card strong,
+    .stats-grid .stat-card strong,
+    .big-score,
+    .big-score span,
+    .hero-copy h1,
+    .hero-copy h1 span,
+    .topbar .brand {
+      color: var(--text-main) !important;
+    }
+
+    .stat-card p,
+    .score-note {
+      color: var(--text-soft) !important;
+    }
+
+    .stat-icon,
+    .target-icon {
+      color: var(--accent) !important;
+      background: var(--accent-soft) !important;
+      border-color: var(--panel-border-hover) !important;
+    }
+
+    .muted {
+      color: var(--text-muted) !important;
+    }
+
+  
+    .topbar {
+      position: fixed;
+      top: 0.9rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1180px, calc(100% - 2rem));
+      z-index: 1000;
+      background: var(--topbar-bg) !important;
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 0.55rem 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .topbar nav {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .topbar .nav-link {
+      font-size: 0.82rem;
+      padding: 0.38rem 0.7rem;
+      color: var(--text-soft);
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .topbar .nav-link.active,
+    .topbar .nav-link:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--chip-bg);
+      color: var(--text-main);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 0.42rem 0.8rem;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+
+    .fullpage-scroller {
+      height: 100vh;
+      width: 100vw;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      position: relative;
+      z-index: 2;
+    }
+
+    .snap-slide {
+      min-height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 5.2rem 1.25rem 2rem;
+      position: relative;
+    }
+
+    .slide-zoom-box {
+      width: min(1140px, 100%);
+      opacity: 0.08;
+      transform: scale(0.86) translateY(40px);
+      filter: blur(5px);
+      transition:
+        opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .snap-slide.is-focused .slide-zoom-box {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      filter: blur(0);
+    }
+
+    .side-dots {
+      position: fixed;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      z-index: 999;
+    }
+
+    @media (max-width: 768px) {
+      .side-dots { display: none; }
+      .snap-slide { height: auto; min-height: 100vh; padding: 5.5rem 0.85rem 2.5rem; }
+    }
+
+    .side-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      opacity: 0.35;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .side-dot:hover {
+      opacity: 0.8;
+      transform: scale(1.25);
+    }
+
+    .side-dot.active {
+      height: 28px;
+      border-radius: 99px;
+      background: var(--accent);
+      opacity: 1;
+      box-shadow: 0 0 12px var(--accent);
+    }
+
+    .scroll-hint {
+      margin-top: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      animation: floatHint 2s infinite ease-in-out;
+      text-decoration: none;
+    }
+
+    @keyframes floatHint {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+ 
+    .chart-panel {
+      padding: 1.5rem 1.75rem;
+    }
+
+    .chart-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .chart-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .chart-ctrl-btn {
+      background: var(--chip-bg);
+      color: var(--text-soft);
+      border: 1px solid var(--chip-border);
+      border-radius: 10px;
+      padding: 0.36rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+
+    .chart-ctrl-btn:hover,
+    .chart-ctrl-btn.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .interactive-canvas-box {
+      position: relative;
+      height: 310px;
+      width: 100%;
+      user-select: none;
+    }
+
+    .interactive-canvas-box canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+
+
+    .chart-floating-tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: var(--topbar-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.78rem;
+      color: var(--text-main);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transform: translate(-50%, -112%) scale(0.92);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 20;
+      white-space: nowrap;
+    }
+
+    .chart-floating-tooltip.visible {
+      opacity: 1;
+      transform: translate(-50%, -112%) scale(1);
+    }
+
+    .tt-title {
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 0.2rem;
+      font-size: 0.84rem;
+    }
+
+    .tt-sub {
+      color: var(--text-muted);
+      font-size: 0.73rem;
+      margin-top: 0.18rem;
+    }
+
+  
+    .secondary-analytics-grid {
+      display: grid;
+      grid-template-columns: 1.32fr 1fr;
+      gap: 1.4rem;
+      width: 100%;
+    }
+
+    @media (max-width: 920px) {
+      .secondary-analytics-grid { grid-template-columns: 1fr; }
+    }
+
+    .bar-chart-panel, .ai-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1.45rem;
+    }
+
+    .bar-chart-wrap {
+      position: relative;
+      height: 250px;
+      width: 100%;
+    }
+
+    .bar-chart-wrap canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: pointer;
+    }
+
+    .compact-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .compact-header h2 {
+      font-size: 1.04rem !important;
+      font-weight: 700;
+      line-height: 1.45;
+      margin: 0 0 0.2rem 0;
+    }
+
+    .compact-header .muted {
+      font-size: 0.76rem;
+      margin: 0;
+    }
+
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--panel-border-hover);
+      padding: 0.26rem 0.65rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      direction: ltr;
+    }
+
+    .ai-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent);
+      animation: aiPulse 1.6s infinite ease-in-out;
+    }
+
+    @keyframes aiPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.45); opacity: 0.45; }
+    }
+
+    .ai-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 215px;
+      background: var(--panel-bg-elevated);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+
+    .ai-loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.85rem;
+      transition: opacity 0.3s ease;
+    }
+
+    .ai-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--accent-soft);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: aiSpin 0.85s linear infinite;
+    }
+
+    @keyframes aiSpin { to { transform: rotate(360deg); } }
+
+    .ai-status-text {
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    .ai-progress-bar {
+      width: 150px;
+      height: 4px;
+      background: var(--chip-border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .ai-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #ffb366);
+      transition: width 0.3s ease;
+    }
+
+    .ai-result {
+      opacity: 0;
+      transform: translateY(14px) scale(0.97);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      gap: 0.85rem;
+    }
+
+    .ai-result.show {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .ai-quote-text {
+      font-size: 0.88rem;
+      line-height: 1.85;
+      color: var(--text-main);
+      margin: auto 0;
+      padding: 0 0.25rem;
+    }
+
+    .ai-meta-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding-top: 0.7rem;
+      border-top: 1px solid var(--panel-border);
+      font-size: 0.73rem;
+      color: var(--text-muted);
+    }
+
+    .ai-refresh-btn {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--panel-border-hover);
+      border-radius: 8px;
+      padding: 0.26rem 0.65rem;
+      font-family: inherit;
+      font-size: 0.73rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+
+    .ai-refresh-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .story-section-head {
+      text-align: center;
+      margin-bottom: 1.15rem;
+    }
+
+    .story-section-head h2 {
+      font-size: 1.4rem;
+      margin: 0 0 0.3rem 0;
+    }
+
+    .story-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.1rem;
+    }
+
+    @media (max-width: 860px) {
+      .story-cards-grid { grid-template-columns: 1fr; }
+    }
+
+    .story-card {
+      padding: 1.2rem 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.8rem;
+    }
+
+    .story-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--panel-border-hover) !important;
+    }
+
+    .story-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+    }
+
+    .story-member-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 0.96rem;
+    }
+
+    .story-step-num {
+      width: 27px;
+      height: 27px;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      border: 1px solid var(--panel-border-hover);
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.84rem;
+    }
+
+    .story-role-pill {
+      font-size: 0.72rem;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+      font-weight: 600;
+    }
+
+    .story-narrative {
+      font-size: 0.84rem;
+      line-height: 1.82;
+      color: var(--text-soft);
+      margin: 0;
+      text-align: justify;
+    }
+
+    .tools-Dock {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.42rem;
+      padding-top: 0.6rem;
+      border-top: 1px dashed var(--panel-border);
+    }
+
+    .tool-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.36rem;
+      background: var(--chip-bg);
+      border: 1px solid var(--chip-border);
+      border-radius: 8px;
+      padding: 0.22rem 0.55rem;
+      font-size: 0.72rem;
+      color: var(--text-main);
+      font-weight: 500;
+      transition: all 0.22s ease;
+    }
+
+    .tool-chip:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .tool-chip svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .roadmap-graphical-panel {
+      padding: 1.65rem 1.9rem;
+    }
+
+    .roadmap-map-wrapper {
+      position: relative;
+      margin: 1.4rem 0 1.15rem;
+      padding: 0.85rem 0;
+    }
+
+    .roadmap-svg-track {
+      position: absolute;
+      top: 36px;
+      left: 10%;
+      right: 10%;
+      width: 80%;
+      height: 8px;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    @media (max-width: 780px) {
+      .roadmap-svg-track { display: none; }
+    }
+
+    .track-base-line {
+      stroke: var(--panel-border);
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+  
+    .track-progress-line {
+      stroke: var(--accent);
+      stroke-width: 4;
+      stroke-linecap: round;
+      transition: x2 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0.55;
+    }
+
+
+    .track-glow-line {
+      stroke: var(--accent);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 12 12;
+      animation: dashFlowRTL 1s linear infinite;
+      filter: drop-shadow(0 0 8px var(--accent));
+    }
+
+    @keyframes dashFlowRTL {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: 24; }
+    }
+
+    .roadmap-stations {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    @media (max-width: 780px) {
+      .roadmap-stations { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .station-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      padding: 0.65rem 0.5rem;
+      border-radius: 16px;
+      transition: all 0.35s ease;
+    }
+
+    .station-pin {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--panel-bg-elevated);
+      border: 2px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.22rem;
+      margin-bottom: 0.65rem;
+      position: relative;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-card);
+    }
+
+    .station-pin::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1.5px dashed transparent;
+      transition: all 0.35s ease;
+    }
+
+    .station-card:hover .station-pin {
+      transform: translateY(-4px) scale(1.06);
+      border-color: var(--accent);
+    }
+
+    .station-card.active .station-pin {
+      background: linear-gradient(135deg, #ff8617, #ff5e00);
+      color: #fff;
+      border-color: #fff;
+      transform: scale(1.16);
+      box-shadow: 0 0 22px rgba(255, 134, 23, 0.6);
+    }
+
+    .station-card.active .station-pin::after {
+      border-color: var(--accent);
+      animation: pinRotate 6s linear infinite;
+    }
+
+    @keyframes pinRotate { to { transform: rotate(-360deg); } }
+
+    .station-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 0.18rem;
+    }
+
+    .station-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .station-stage-inspector {
+      margin-top: 0.9rem;
+      background: var(--panel-bg-elevated);
+      border: 1px solid var(--panel-border-hover);
+      border-radius: 16px;
+      padding: 1.35rem 1.65rem;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .station-stage-inspector.zoom-out {
+      opacity: 0;
+      transform: scale(0.94) translateY(12px);
+    }
+
+    .station-stage-inspector.zoom-in {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    .inspector-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .inspector-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 0;
+    }
+
+    .inspector-tag {
+      font-size: 0.78rem;
+      background: var(--chip-bg);
+      padding: 0.25rem 0.75rem;
+      border-radius: 99px;
+      border: 1px solid var(--chip-border);
+    }
+
+    .inspector-body {
+      font-size: 0.89rem;
+      line-height: 1.9;
+      color: var(--text-soft);
+      text-align: justify;
+      margin: 0 0 0.85rem 0;
+    }
+
+    .sessions-panel {
+      padding: 1.5rem 1.75rem;
+    }
+
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-bottom: 1.1rem;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .table-search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .table-search-input {
+      background: var(--panel-bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 0.45rem 0.85rem;
+      font-family: inherit;
+      font-size: 0.8rem;
+      width: 220px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .table-search-input:focus {
+      border-color: var(--accent);
+    }
+
+    .table-sort-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .modern-table-wrap {
+      max-height: 46vh;
+      overflow-y: auto;
+      padding-left: 0.25rem;
+    }
+
+    .modern-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 0.55rem;
+    }
+
+    .modern-table thead th {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      text-align: right;
+      border: none;
+    }
+
+    .modern-table tbody tr {
+      background: var(--table-row-bg);
+      transition: transform 0.22s ease, background-color 0.22s ease;
+    }
+
+    .modern-table tbody tr:hover {
+      background: var(--table-row-hover);
+      transform: scale(1.008);
+    }
+
+    .modern-table tbody td {
+      padding: 0.85rem 1rem;
+      border-top: 1px solid var(--panel-border);
+      border-bottom: 1px solid var(--panel-border);
+      font-size: 0.88rem;
+    }
+
+    .modern-table tbody td:first-child {
+      border-right: 1px solid var(--panel-border);
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+
+    .modern-table tbody td:last-child {
+      border-left: 1px solid var(--panel-border);
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
+
+    .sess-id-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 700;
+      background: var(--chip-bg);
+      border: 1px solid var(--chip-border);
+      padding: 0.25rem 0.65rem;
+      border-radius: 8px;
+    }
+
+    .dorost-bar-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 180px;
+    }
+
+    .dorost-num {
+      font-weight: 800;
+      color: var(--accent);
+      font-size: 1rem;
+      min-width: 32px;
+    }
+
+    .mini-progress-track {
+      flex: 1;
+      height: 7px;
+      background: var(--chip-border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .mini-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #ffb366);
+      border-radius: 99px;
+      transition: width 0.6s ease;
+    }
+
+    .speed-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(255, 180, 50, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(255, 134, 23, 0.28);
+      padding: 0.22rem 0.6rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.24rem 0.65rem;
+      border-radius: 99px;
+      font-size: 0.74rem;
+      font-weight: 600;
+    }
+
+    .status-gold {
+      background: rgba(243, 186, 47, 0.16);
+      color: #d99b00;
+      border: 1px solid rgba(243, 186, 47, 0.45);
+    }
+
+    html[data-theme="dark"] .status-gold { color: #f3ba2f; }
+
+    .status-hot {
+      background: rgba(255, 134, 23, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(255, 134, 23, 0.35);
+    }
+
+    .status-normal {
+      background: var(--chip-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--chip-border);
+    }
+
+
+    .docs-panel, .donate-panel {
+      padding: 1.9rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.1rem;
+    }
+
+    .github-icon-circle, .bnb-badge-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: var(--chip-bg);
+      border: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bnb-badge-icon {
+      border-radius: 50%;
+      background: rgba(243, 186, 47, 0.14);
+      border-color: rgba(243, 186, 47, 0.4);
+    }
+
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      width: 100%;
+      text-align: right;
+    }
+
+    @media (max-width: 780px) {
+      .docs-grid { grid-template-columns: 1fr; }
+    }
+
+    .doc-feature-box {
+      background: var(--panel-bg-elevated);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1rem 1.15rem;
+    }
+
+    .doc-feature-box h4 {
+      margin: 0 0 0.35rem 0;
+      color: var(--accent);
+      font-size: 0.92rem;
+    }
+
+    .doc-feature-box p {
+      margin: 0;
+      font-size: 0.8rem;
+      line-height: 1.75;
+      color: var(--text-soft);
+    }
+
+    .github-coming-soon-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: var(--accent-soft);
+      border: 1px dashed var(--accent);
+      padding: 0.7rem 1.25rem;
+      border-radius: 12px;
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .wallet-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      background: var(--panel-bg-elevated);
+      border: 1px solid rgba(243, 186, 47, 0.45);
+      border-radius: 14px;
+      padding: 0.7rem 1rem;
+      width: min(620px, 100%);
+      direction: ltr;
+    }
+
+    @media (max-width: 600px) {
+      .wallet-box { flex-direction: column; }
+    }
+
+    .wallet-address {
+      font-family: monospace;
+      font-size: 0.86rem;
+      color: #d99b00;
+      word-break: break-all;
+    }
+
+    html[data-theme="dark"] .wallet-address { color: #f3ba2f; }
+
+    .copy-wallet-btn {
+      background: #f3ba2f;
+      color: #111;
+      border: none;
+      border-radius: 10px;
+      padding: 0.5rem 0.95rem;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.22s ease;
+    }
+
+    .copy-wallet-btn:hover {
+      background: #ffd15c;
+      transform: translateY(-2px);
+    }
+
+    .footer-in-slide {
+      margin-top: 1.5rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    .creator-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 800;
+      padding: 0.14rem 0.45rem;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      border: 1px solid var(--panel-border-hover);
+      transition: all 0.22s ease;
+      display: inline-block;
+    }
+
+    .creator-link:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .copyright-text {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin: 0.4rem 0 0 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="bg-canvas-layer"></div>
+  <div class="mouse-spotlight-layer" id="mouseSpotlight"></div>
+
+
+  <header class="topbar">
+    <a class="brand" href="#slide-home">
+      <span class="brand-mark">▥</span>
+      <span>Dorost<span>Sanj</span></span>
+    </a>
+
+    <nav>
+      <a class="nav-link active" href="#slide-home">خانه</a>
+      <a class="nav-link" href="#slide-linechart">نمودار خطی</a>
+      <a class="nav-link" href="#slide-ai">ستونی و AI</a>
+      <a class="nav-link" href="#slide-sessions">جدول جلسه‌ها</a>
+      <a class="nav-link" href="#slide-story">داستان و ابزارها</a>
+      <a class="nav-link" href="#slide-roadmap">نقشه راه</a>
+      <a class="nav-link" href="#slide-docs">مستندات</a>
+      <a class="nav-link" href="#slide-donate">Donate</a>
+    </nav>
+
+    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="تغییر تم تاریک / روشن">
+      <span id="themeIcon">☀️</span>
+      <span id="themeLabel">حالت روشن</span>
+    </button>
+  </header>
+
+
+  <div class="side-dots" id="sideDots">
+    <a href="#slide-home" class="side-dot active" title="خانه"></a>
+    <a href="#slide-linechart" class="side-dot" title="نمودار خطی"></a>
+    <a href="#slide-ai" class="side-dot" title="نمودار ستونی و هوش مصنوعی"></a>
+    <a href="#slide-sessions" class="side-dot" title="جدول جلسه‌ها"></a>
+    <a href="#slide-story" class="side-dot" title="داستان و ابزارها"></a>
+    <a href="#slide-roadmap" class="side-dot" title="نقشه راه"></a>
+    <a href="#slide-docs" class="side-dot" title="مستندات گیت‌هاب"></a>
+    <a href="#slide-donate" class="side-dot" title="حمایت و سازندگان"></a>
+  </div>
+
+
+  <div class="fullpage-scroller" id="fullpageScroller">
+
+
+    <section class="snap-slide is-focused" id="slide-home">
+      <div class="slide-zoom-box">
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">پروژه تحقیقاتی ما در {{session_count}} جلسه</p>
+            <h1>
+              <span>ثبت کلمه درست</span>
+              <br>
+              <em>در هر جلسه.</em>
+            </h1>
+          </div>
+
+          <div class="featured-score panel">
+            <div class="target-icon">◎</div>
+            <div>
+              <p class="muted">«درست» های ثبت شده</p>
+              <div class="big-score">
+                <span>{{ alldorost }}</span>
+              </div>
+            </div>
+            <div class="score-note">
+              <span class="pulse"></span>
+              <span>هر جلسه، پیشرفت تازه</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-grid" aria-label="Summary statistics" style="margin-top: 1.4rem;">
+          <article class="stat-card panel">
+            <div class="stat-icon">✓</div>
+            <div>
+              <p>مجموع «درست» های ثبت شده</p>
+              <strong>{{ alldorost|default:"0" }}</strong>
+            </div>
+          </article>
+
+          <article class="stat-card panel">
+            <div class="stat-icon">Σ</div>
+            <div>
+              <p>بیشترین «درست» در ۱ جلسه</p>
+              <strong>{{ best_of_dorost }}</strong>
+            </div>
+          </article>
+
+          <article class="stat-card panel">
+            <div class="stat-icon">％</div>
+            <div>
+              <p>بیشترین «درست» در ۱ دقیقه</p>
+              <strong>{{ best_in_1_min }}</strong>
+            </div>
+          </article>
+
+          <article class="stat-card panel">
+            <div class="stat-icon">▦</div>
+            <div>
+              <p>تعداد جلسه‌ها</p>
+              <strong>{{ session_count|default:"0" }}</strong>
+            </div>
+          </article>
+        </div>
+
+        <a href="#slide-linechart" class="scroll-hint">
+          <span>اسکرول کنید تا نمودار از صفر ترسیم شود</span>
+          <span>↓</span>
+        </a>
+      </div>
+    </section>
+
+
+    <section class="snap-slide" id="slide-linechart">
+      <div class="slide-zoom-box">
+        <div class="panel chart-panel">
+          <div class="chart-header-row">
+            <div>
+              <h2 style="margin: 0 0 0.2rem 0;">نمودار خطی پیشرفت جلسات</h2>
+              <p class="muted" style="margin: 0; font-size: 0.82rem;">ماوس را روی نقاط حرکت دهید تا تحلیل هر جلسه و اختلاف با میانگین نمایش داده شود</p>
+            </div>
+            <div class="chart-controls">
+              <button type="button" class="chart-ctrl-btn active" id="toggleSmoothBtn">🌊 حالت منحنی</button>
+              <button type="button" class="chart-ctrl-btn active" id="toggleAvgLineBtn">📏 خط میانگین</button>
+              <button type="button" class="chart-ctrl-btn" id="replayLineChartBtn">↻ ترسیم مجدد از صفر</button>
+            </div>
+          </div>
+
+          <div class="interactive-canvas-box" id="lineChartContainer">
+            <canvas id="progressChart"></canvas>
+            <div class="chart-floating-tooltip" id="lineTooltip"></div>
+          </div>
+
+          <p class="chart-empty" id="chartEmpty" hidden>
+            هنوز اطلاعاتی برای نمایش نمودار وجود ندارد.
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="snap-slide" id="slide-ai">
+      <div class="slide-zoom-box">
+        <div class="secondary-analytics-grid">
+
+  
+          <div class="panel bar-chart-panel">
+            <div class="compact-header">
+              <div>
+                <h2>نمودار ستونی جلسات</h2>
+                <p class="muted">رشد از صفر با شمارشگر زنده روی هر ستون (روی ستون‌ها بایستید)</p>
+              </div>
+              <button type="button" class="chart-ctrl-btn" id="replayBarChartBtn">↻ رشد مجدد</button>
+            </div>
+
+            <div class="bar-chart-wrap" id="barChartContainer">
+              <canvas id="barChart"></canvas>
+              <div class="chart-floating-tooltip" id="barTooltip"></div>
+            </div>
+
+            <p class="chart-empty" id="barChartEmpty" hidden>
+              هنوز اطلاعاتی برای نمایش نمودار ستونی وجود ندارد.
+            </p>
+          </div>
+
+  
+          <div class="panel ai-panel" id="aiPredictorSection">
+            <div class="compact-header">
+              <div>
+                <h2>تخمین درست‌های جلسه بعد توسط هوش مصنوعی</h2>
+                <p class="muted">مدل پیش‌بینی مبتنی بر رفتار جلسات</p>
+              </div>
+              <span class="ai-badge">
+                <span class="ai-badge-dot"></span>
+                AI Engine v2.4
+              </span>
+            </div>
+
+            <div class="ai-body">
+              <div class="ai-loader" id="aiLoader">
+                <div class="ai-spinner"></div>
+                <div class="ai-status-text" id="aiStatusText">در حال اتصال به هسته پردازش...</div>
+                <div class="ai-progress-bar">
+                  <div class="ai-progress-fill" id="aiProgressFill"></div>
+                </div>
+              </div>
+
+              <div class="ai-result" id="aiResult">
+                <p class="ai-quote-text" id="aiQuoteText"></p>
+                <div class="ai-meta-footer">
+                  <span id="aiLatencyText">پاسخ از API دریافت شد (88ms)</span>
+                  <button type="button" class="ai-refresh-btn" id="aiReanalyzeBtn">تحلیل مجدد ↻</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <section class="snap-slide" id="slide-sessions">
+      <div class="slide-zoom-box">
+        <div class="panel sessions-panel">
+          <div class="table-toolbar">
+            <div class="title-with-icon">
+              <span class="table-icon">▤</span>
+              <div>
+                <h2 style="margin: 0;">داشبورد تحلیلی جلسه‌ها</h2>
+                <p class="muted" style="margin: 0.15rem 0 0 0; font-size: 0.78rem;">مقایسه، جستجو و رتبه‌بندی تمام جلسات ثبت‌شده در دیتابیس</p>
+              </div>
+            </div>
+
+            <div class="table-sort-group">
+              <input type="text" class="table-search-input" id="tableSearchInput" placeholder="🔍 جستجوی شماره جلسه یا عدد...">
+              <button type="button" class="chart-ctrl-btn active" data-sort="sess">مرتب‌سازی: شماره جلسه</button>
+              <button type="button" class="chart-ctrl-btn" data-sort="dorost">🔥 بیشترین درست</button>
+              <button type="button" class="chart-ctrl-btn" data-sort="best1m">⚡ رکورد ۱ دقیقه</button>
+            </div>
+          </div>
+
+          <div class="modern-table-wrap">
+            <table class="modern-table" id="sessionsTable">
+              <thead>
+                <tr>
+                  <th>شماره جلسه</th>
+                  <th>تعداد «درست» و نسبت به رکورد کل</th>
+                  <th>رکورد طوفانی (۱ دقیقه)</th>
+                  <th>وضعیت و تراکم جلسه</th>
+                </tr>
+              </thead>
+              <tbody id="sessionsTableBody">
+                {% for item in sessions %}
+                  <tr class="session-row"
+                      data-sess="{{ item.sess }}"
+                      data-dorost="{{ item.dorost }}"
+                      data-best1m="{{ item.best_of_dorost }}">
+                    <td>
+                      <span class="sess-id-badge">جلسه #{{ item.sess }}</span>
+                    </td>
+                    <td>
+                      <div class="dorost-bar-cell">
+                        <span class="dorost-num">{{ item.dorost }}</span>
+                        <div class="mini-progress-track">
+                          <div class="mini-progress-fill" data-val="{{ item.dorost }}"></div>
+                        </div>
+                        <span class="muted row-pct-text" style="font-size: 0.74rem; min-width: 34px;"></span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="speed-pill">⚡ {{ item.best_of_dorost }} در دقیقه</span>
+                    </td>
+                    <td class="row-status-cell"></td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="4" style="text-align: center;">هنوز جلسه‌ای در دیتابیس ثبت نشده است.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="snap-slide" id="slide-story">
+      <div class="slide-zoom-box">
+        <div class="story-section-head">
+          <h2>داستان ما؛ از چوب‌خط‌های کاغذی تا سرورهای بین‌المللی</h2>
+          <p class="muted">چگونه چهار نگاه و چهار جعبه ابزار متفاوت، پروژه تحقیقاتی «درست‌سنج» را خلق کردند؟</p>
+        </div>
+
+        <div class="story-cards-grid">
+
+
+          <article class="story-card">
+            <div>
+              <div class="story-card-top">
+                <span class="story-member-badge">
+                  <span class="story-step-num">۱</span>
+                  ایلیا — معمار ایده و کشف الگو
+                </span>
+                <span class="story-role-pill">آغازگر پروژه</span>
+              </div>
+              <p class="story-narrative" style="margin-top: 0.65rem;">
+                همه‌چیز از ذهن پُرتوجه و دقت موشکافانه‌ی <b>ایلیا</b> شروع شد. در حالی که گذر کلمات در کلاس برای همه عادی به نظر می‌رسید، رادار ذهنی او بسامد بالای واژه‌ی «درست» را شکار کرد و پیشنهاد داد این تکرار کلامی از یک شوخی ساده به یک پروژه‌ی آماری و تحقیقاتی واقعی تبدیل شود.
+              </p>
+            </div>
+            <div class="tools-Dock">
+              <span class="tool-chip">🧠 ذهن تحلیل‌گر و متمرکز</span>
+              <span class="tool-chip">🎯 دقت و توجه بالا</span>
+              <span class="tool-chip">🔍 کشف الگوی کلامی</span>
+              <span class="tool-chip">💡 مهندسی ایده اولیه</span>
+            </div>
+          </article>
+
+
+          <article class="story-card">
+            <div>
+              <div class="story-card-top">
+                <span class="story-member-badge">
+                  <span class="story-step-num">۲</span>
+                  صادق — شمارش حضوری و چوب‌خطی
+                </span>
+                <span class="story-role-pill">گردآوری داده‌ها</span>
+              </div>
+              <p class="story-narrative" style="margin-top: 0.65rem;">
+                بدون داده، هیچ نموداری معنا نداشت. <b>صادق</b> در خط مقدم جلسات حضوری، کاغذ و قلم به دست گرفت و با روش اصیل و کلاسیک <b>چوب‌خط‌زنی (卌)</b>، تک‌تک «درست»ها را در لحظه شکار کرد. او حتی با کرنومتر، طوفانی‌ترین دقیقه‌ی هر جلسه را هم ثبت کرد تا رکورد «بیشترین درست در ۱ دقیقه» به دست آید.
+              </p>
+            </div>
+            <div class="tools-Dock">
+              <span class="tool-chip">卌 شمارش چوب‌خطی سنتی</span>
+              <span class="tool-chip">📝 حضور فیزیکی و کاغذ و قلم</span>
+              <span class="tool-chip">⏱️ کرنومتر ثبت رکورد ۱ دقیقه‌ای</span>
+              <span class="tool-chip">👂 رصد شنیداری بی‌وقفه</span>
+            </div>
+          </article>
+
+    
+          <article class="story-card">
+            <div>
+              <div class="story-card-top">
+                <span class="story-member-badge">
+                  <span class="story-step-num">۳</span>
+                  کیامهر — مهندسی تک‌نفره فرانت و بک‌اند
+                </span>
+                <span class="story-role-pill">توسعه‌دهنده فول‌استک</span>
+              </div>
+              <p class="story-narrative" style="margin-top: 0.65rem;">
+                برای تبدیل چوب‌خط‌های کاغذی صادق به یک پلتفرم زنده، <b>کیامهر</b> یک‌تنه وارد میدان شد. او صفر تا صد معماری بک‌اند با <b>Python</b> و فریم‌ورک <b>Django</b>، طراحی دیتابیس <b>SQLite</b>، رابط کاربری مدرن با <b>HTML5/CSS3</b> و منطق تعاملی <b>JavaScript</b> را به تنهایی کدنویسی و مهندسی کرد.
+              </p>
+            </div>
+            <div class="tools-Dock">
+              <span class="tool-chip">
+                <svg viewBox="0 0 24 24" fill="#3776AB"><path d="M12 2c-5.1 0-4.8 2.2-4.8 2.2l.01 2.3h4.9v.7H5.3S2 6.8 2 11.9c0 5.1 2.9 4.9 2.9 4.9h1.7v-2.4s-.1-2.9 2.8-2.9h4.9s2.7.04 2.7-2.6V4.5S17.4 2 12 2zm-2.7 1.4c.5 0 .9.4.9.9s-.4.9-.9.9-.9-.4-.9-.9.4-.9.9-.9z"/><path fill="#FFD43B" d="M12 22c5.1 0 4.8-2.2 4.8-2.2l-.01-2.3H11.9v-.7h6.8s3.3.4 3.3-4.7c0-5.1-2.9-4.9-2.9-4.9h-1.7v2.4s.1 2.9-2.8 2.9H9.7s-2.7-.04-2.7 2.6v4.4S6.6 22 12 22zm2.7-1.4c-.5 0-.9-.4-.9-.9s.4-.9.9-.9.9.4.9.9-.4.9-.9.9z"/></svg>
+                Python
+              </span>
+              <span class="tool-chip">
+                <svg viewBox="0 0 24 24" fill="#44B78B"><path d="M11.1 3h3.9v11.1c-2 .4-3.5.6-5.1.6-4.8 0-7.3-2.2-7.3-6.3 0-4 2.7-6.6 6.8-6.6.6 0 1.1.1 1.7.2V3zm0 5.5c-.5-.2-.9-.2-1.4-.2-2.1 0-3.3 1.3-3.3 3.6 0 2.2 1.2 3.5 3.3 3.5.5 0 .9 0 1.4-.1V8.5zm5.8-5.5h3.9v3.9h-3.9V3zm0 5.6h3.9v9.1c0 3.1-1.6 4.7-4.8 5.3l-1.9-3c1.9-.4 2.8-1.1 2.8-3.1V8.6z"/></svg>
+                Django
+              </span>
+              <span class="tool-chip">
+                <svg viewBox="0 0 24 24" fill="#F7DF1E"><rect width="24" height="24" rx="4"/><path fill="#000" d="M12.5 17.5c0 1.9-1.1 2.8-2.8 2.8-1.5 0-2.4-.8-2.8-1.7l1.5-.9c.3.5.6.9 1.2.9.6 0 1-.3 1-1.2v-6.4h1.9v6.5zm5.7 2.8c-1.8 0-3-.9-3.6-2l1.5-.9c.4.7 1 1.2 2 1.2.9 0 1.4-.4 1.4-1 0-.7-.5-1-1.6-1.4l-.6-.3c-1.6-.7-2.6-1.5-2.6-3.3 0-1.6 1.2-2.9 3.1-2.9 1.4 0 2.4.5 3.1 1.7l-1.5 1c-.3-.6-.8-.9-1.6-.9-.7 0-1.2.4-1.2 1 0 .7.5 1 1.5 1.4l.6.3c1.9.8 2.9 1.6 2.9 3.4 0 1.9-1.5 2.7-3.4 2.7z"/></svg>
+                JavaScript
+              </span>
+              <span class="tool-chip">
+                <svg viewBox="0 0 24 24" fill="#E34F26"><path d="M3 2l1.6 18L12 22l7.4-2L21 2H3zm14.3 5.9H8.8l.2 2.3h8.1l-.6 6.9-4.5 1.3-4.5-1.3-.3-3.5h2.2l.2 1.8 2.4.7 2.4-.7.3-2.9H7l-.6-6.8h11.1l-.2 2.2z"/></svg>
+                HTML5 & CSS3
+              </span>
+              <span class="tool-chip">🗄️ SQLite DB</span>
+            </div>
+          </article>
+
+
+          <article class="story-card">
+            <div>
+              <div class="story-card-top">
+                <span class="story-member-badge">
+                  <span class="story-step-num">۴</span>
+                  ارشیا — راهبری ارائه، بلاکچین و عبور از تحریم
+                </span>
+                <span class="story-role-pill">انتشار و زیرساخت</span>
+              </div>
+              <p class="story-narrative" style="margin-top: 0.65rem;">
+                در گام نهایی، <b>ارشیا</b> استراتژی و ایده کلی نحوه ارائه پروژه را طراحی کرد. وقتی تحریم‌های بین‌المللی سد راه خرید سرور و دامنه شدند، او با بهره‌گیری از شبکه‌های <b>بلاکچین (Crypto)</b>، معاملات <b>P2P (همتا‌به‌همتا)</b> و درگاه‌های واسطه، پرداخت‌های ارزی را مدیریت کرد و زیرساخت سرور را بالا آورد.
+              </p>
+            </div>
+            <div class="tools-Dock">
+              <span class="tool-chip">
+                <svg viewBox="0 0 24 24" fill="#F3BA2F"><path d="M12 2L6.5 7.5l2.1 2.1L12 6.2l3.4 3.4 2.1-2.1L12 2zm-7.9 7.9L2 12l2.1 2.1L6.2 12 4.1 9.9zm15.8 0L17.8 12l2.1 2.1L22 12l-2.1-2.1zM12 9.8L9.8 12 12 14.2 14.2 12 12 9.8zM6.5 16.5L12 22l5.5-5.5-2.1-2.1L12 17.8l-3.4-3.4-2.1 2.1z"/></svg>
+                Blockchain & Crypto
+              </span>
+              <span class="tool-chip">🔄 شبکه P2P و واسطه‌های ارزی</span>
+              <span class="tool-chip">
+                <svg viewBox="0 0 24 24" fill="#F38020"><path d="M16.5 15.5c.3-1 .1-1.9-.6-2.4-.5-.4-1.3-.5-2.1-.5l-7.2-.1c-.2 0-.3-.1-.4-.2-.1-.1-.1-.3 0-.4.1-.3.4-.5.7-.5l7.3-.1c1.6-.1 3.3-1.4 3.9-3l.7-1.9c.1-.2.1-.4 0-.6-1.1-2.3-3.5-3.8-6.2-3.8-3.1 0-5.8 2.1-6.6 5-.6-.4-1.4-.6-2.3-.5-1.6.2-2.9 1.5-3.1 3.1-.1.5 0 1 .1 1.5C.3 11.4 0 12.2 0 13.1c0 1.8 1.5 3.3 3.3 3.3h12.6c.3 0 .5-.2.6-.5v-.4z"/></svg>
+                Domain & DNS
+              </span>
+              <span class="tool-chip">🖥️ Linux VPS Server</span>
+              <span class="tool-chip">🛡️ دور زدن تحریم‌ها</span>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+
+    <section class="snap-slide" id="slide-roadmap">
+      <div class="slide-zoom-box">
+        <div class="panel roadmap-graphical-panel">
+          <div class="section-heading">
+            <div>
+              <h2>نقشه راه گرافیکی شکل‌گیری پروژه</h2>
+              <p class="muted">مسیر جریان از ایستگاه ۱ (راست) به سمت ایستگاه ۴ (چپ) — روی هر ایستگاه کلیک کنید</p>
+            </div>
+          </div>
+
+          <div class="roadmap-map-wrapper">
+
+            <svg class="roadmap-svg-track" viewBox="0 0 800 10" preserveAspectRatio="none">
+              <line x1="800" y1="5" x2="0" y2="5" class="track-base-line"></line>
+              <line x1="800" y1="5" x2="800" y2="5" class="track-progress-line" id="roadmapProgressLine"></line>
+              <line x1="0" y1="5" x2="800" y2="5" class="track-glow-line"></line>
+            </svg>
+
+            <div class="roadmap-stations" id="roadmapStations">
+              <div class="station-card active" data-step="0">
+                <div class="station-pin">🎯</div>
+                <div class="station-title">ایستگاه ۱: آغاز شمارش</div>
+                <div class="station-sub">ایده‌پرداز: ایلیا</div>
+              </div>
+
+              <div class="station-card" data-step="1">
+                <div class="station-pin">卌</div>
+                <div class="station-title">ایستگاه ۲: جمع‌آوری اطلاعات</div>
+                <div class="station-sub">ثبت چوب‌خطی: صادق</div>
+              </div>
+
+              <div class="station-card" data-step="2">
+                <div class="station-pin">💻</div>
+                <div class="station-title">ایستگاه ۳: روند آماده‌سازی</div>
+                <div class="station-sub">فول‌استک: کیامهر</div>
+              </div>
+
+              <div class="station-card" data-step="3">
+                <div class="station-pin">🚀</div>
+                <div class="station-title">ایستگاه ۴: انتشار و راهبری</div>
+                <div class="station-sub">زیرساخت و ارائه: ارشیا</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="station-stage-inspector zoom-in" id="stationInspector">
+            <div class="inspector-head">
+              <h3 class="inspector-title" id="inspectorTitle">بخش ۱: آغاز شمارش</h3>
+              <span class="inspector-tag" id="inspectorTag">آغازگر پروژه و ایده‌پرداز: ایلیا</span>
+            </div>
+            <p class="inspector-body" id="inspectorBody"></p>
+            <div class="tools-Dock" id="inspectorTools"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="snap-slide" id="slide-docs">
+      <div class="slide-zoom-box">
+        <div class="panel docs-panel">
+          <div class="github-icon-circle">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.25.8-.55v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.55-.3-5.25-1.3-5.25-5.7 0-1.25.45-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 .95-.3 3.1 1.2.9-.25 1.9-.4 2.9-.4s2 .15 2.9.4c2.15-1.5 3.1-1.2 3.1-1.2.6 1.6.2 2.8.1 3.1.75.8 1.2 1.85 1.2 3.1 0 4.4-2.7 5.4-5.25 5.7.4.35.8 1.05.8 2.1v3.1c0 .3.2.65.8.55 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.65 18.35.5 12 .5z"/>
+            </svg>
+          </div>
+
+          <div>
+            <h2 style="margin: 0 0 0.35rem 0; font-size: 1.38rem;">مستندات فنی و سورس‌کد پروژه</h2>
+            <p class="muted" style="max-width: 680px; margin: 0 auto; line-height: 1.8;">
+              پروژه «درست‌سنج» با هدف شفافیت آماری و ارائه یک ساختار تمیز بر پایه Django طراحی شده است. مستندات کامل نصب، ساختار مدل‌های دیتابیس و موتور گرافیکی نمودارها به‌زودی به صورت متن‌باز (Open-Source) منتشر می‌شوند.
+            </p>
+          </div>
+
+          <div class="docs-grid">
+            <div class="doc-feature-box">
+              <h4>⚙️ معماری بک‌اند (Django)</h4>
+              <p>مدیریت مدل جلسات (`session`)، محاسبه خودکار بیشینه‌ها در ویوها و پنل ادمین اختصاصی برای ثبت داده‌های جدید.</p>
+            </div>
+            <div class="doc-feature-box">
+              <h4>📊 موتور بصری‌سازی (Canvas Engine)</h4>
+              <p>تبدیل داده‌های پایتون با استفاده از `json_script` ایمن جنگو به نمودارهای خطی و ستونی تعاملی با ترسیم زنده از صفر.</p>
+            </div>
+            <div class="doc-feature-box">
+              <h4>📖 راهنمای استقرار (Deployment)</h4>
+              <p>شامل مستندات اجرای محلی، پیکربندی متغیرهای محیطی پروداکشن و راه‌اندازی روی سرور لینوکس.</p>
+            </div>
+          </div>
+
+          <div class="github-coming-soon-box">
+            <span>⏳</span>
+            <span>سورس‌کد و مستندات کامل به‌زودی داخل GitHub آپلود می‌شود و لینک مخزن در همین بخش درج خواهد شد.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="snap-slide" id="slide-donate">
+      <div class="slide-zoom-box">
+        <div class="panel donate-panel">
+          <div class="bnb-badge-icon">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="#F3BA2F">
+              <path d="M12 2L6.5 7.5l2.1 2.1L12 6.2l3.4 3.4 2.1-2.1L12 2zm-7.9 7.9L2 12l2.1 2.1L6.2 12 4.1 9.9zm15.8 0L17.8 12l2.1 2.1L22 12l-2.1-2.1zM12 9.8L9.8 12 12 14.2 14.2 12 12 9.8zM6.5 16.5L12 22l5.5-5.5-2.1-2.1L12 17.8l-3.4-3.4-2.1 2.1z"/>
+            </svg>
+          </div>
+
+          <div>
+            <h2 style="margin: 0 0 0.35rem 0; font-size: 1.35rem;">حمایت مالی از پروژه (Donate)</h2>
+            <p class="muted" style="max-width: 600px; margin: 0 auto; line-height: 1.8;">
+              اگر این پروژه تحقیقاتی، داستان شکل‌گیری و رابط کاربری آن برایتان جذاب بوده است، می‌توانید برای تأمین هزینه‌های نگهداری سرور، تمدید دامنه و توسعه قابلیت‌های بعدی، از طریق رمزارز <b>BNB</b> از تیم ما حمایت کنید:
+            </p>
+          </div>
+
+          <div class="wallet-box">
+            <span class="wallet-address" id="bnbWalletAddress">0x68673bc91BD3cEa9F1bd7c49d0aaA392b210ff7c</span>
+            <button type="button" class="copy-wallet-btn" id="copyWalletBtn">کپی آدرس BNB</button>
+          </div>
+        </div>
+
+        <footer class="footer-in-slide">
+          <span class="footer-line"></span>
+          <div class="footer-copy-wrap">
+            <p style="margin: 0.4rem 0; font-size: 0.95rem;">
+              ♥ &nbsp; made with love by
+              <a href="https://t.me/its_kimkimlol" target="_blank" rel="noopener noreferrer" class="creator-link">kiamehr</a>
+              and
+              <a href="https://t.me/Arshiya_mohammadii" target="_blank" rel="noopener noreferrer" class="creator-link">arshiya</a>
+              &nbsp; ♥
+            </p>
+            <p class="copyright-text">© ۲۰۲۶ DorostSanj — تمامی حقوق مادی و معنوی این پروژه متعلق به تیم سازنده و محفوظ است.</p>
+          </div>
+          <span class="footer-line"></span>
+        </footer>
+      </div>
+    </section>
+
+  </div>
+
+  {{ chart_labels|json_script:"chart-labels" }}
+  {{ chart_data|json_script:"chart-data" }}
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const htmlEl = document.documentElement;
+      const scroller = document.getElementById("fullpageScroller");
+
+      let lineAnimProgress = 0;
+      let lineAnimReq = null;
+      let useSmoothCurve = true;
+      let showAvgLine = true;
+      let hoveredLineIndex = -1;
+      let linePointsCoords = [];
+
+      let barAnimProgress = 0;
+      let barAnimReq = null;
+      let hoveredBarIndex = -1;
+      let barRects = [];
+
+      const lineCanvas = document.getElementById("progressChart");
+      const lineContainer = document.getElementById("lineChartContainer");
+      const lineTooltip = document.getElementById("lineTooltip");
+      const lineEmpty = document.getElementById("chartEmpty");
+
+      const barCanvas = document.getElementById("barChart");
+      const barContainer = document.getElementById("barChartContainer");
+      const barTooltip = document.getElementById("barTooltip");
+      const barEmpty = document.getElementById("barChartEmpty");
+
+
+      window.addEventListener("mousemove", function (e) {
+        htmlEl.style.setProperty("--mouse-x", e.clientX + "px");
+        htmlEl.style.setProperty("--mouse-y", e.clientY + "px");
+      });
+
+      function parseSafeArray(scriptId) {
+        try {
+          const el = document.getElementById(scriptId);
+          if (!el || !el.textContent) return [];
+          let parsed = JSON.parse(el.textContent);
+          if (typeof parsed === "string") {
+            parsed = JSON.parse(parsed);
+          }
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (err) {
+          return [];
+        }
+      }
+
+      let chartLabels = parseSafeArray("chart-labels");
+      let chartData = parseSafeArray("chart-data").map((v) => Number(v) || 0);
+
+
+      const sessionRows = Array.from(document.querySelectorAll(".session-row"));
+      if (!chartData.length && sessionRows.length) {
+        chartLabels = sessionRows.map((r) => r.dataset.sess || "");
+        chartData = sessionRows.map((r) => parseInt(r.dataset.dorost, 10) || 0);
+      }
+
+      const maxVal = chartData.length ? Math.max(...chartData) : 100;
+      const avgVal = chartData.length
+        ? Math.round(chartData.reduce((a, b) => a + b, 0) / chartData.length)
+        : 65;
+      const totalVal = chartData.reduce((a, b) => a + b, 0);
+
+
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
+      const themeIcon = document.getElementById("themeIcon");
+      const themeLabel = document.getElementById("themeLabel");
+
+      function getSavedTheme() {
+        try {
+          return localStorage.getItem("dorostsanj_theme") || "dark";
+        } catch (e) {
+          return "dark";
+        }
+      }
+
+      function applyTheme(theme) {
+        htmlEl.setAttribute("data-theme", theme);
+        try {
+          localStorage.setItem("dorostsanj_theme", theme);
+        } catch (e) {}
+
+        if (themeIcon && themeLabel) {
+          if (theme === "light") {
+            themeIcon.textContent = "🌙";
+            themeLabel.textContent = "حالت تاریک";
+          } else {
+            themeIcon.textContent = "☀️";
+            themeLabel.textContent = "حالت روشن";
+          }
+        }
+
+        if (lineAnimProgress > 0) drawLineFrame(lineAnimProgress);
+        if (barAnimProgress > 0) drawBarFrame(barAnimProgress);
+      }
+
+      applyTheme(getSavedTheme());
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", function () {
+          const next = htmlEl.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          applyTheme(next);
+        });
+      }
+
+
+      function getThemeColors() {
+        const isLight = htmlEl.getAttribute("data-theme") === "light";
+        return {
+          grid: isLight ? "rgba(15, 23, 42, 0.08)" : "rgba(255, 255, 255, 0.075)",
+          text: isLight ? "#475569" : "rgba(255, 255, 255, 0.62)",
+          accent: isLight ? "#ea6c00" : "#ff8617",
+          pointBg: isLight ? "#ffffff" : "#14141b"
+        };
+      }
+
+
+      function drawLineFrame(progress) {
+        if (!lineCanvas || !chartData.length) return;
+        const dpr = window.devicePixelRatio || 1;
+        const w = lineCanvas.clientWidth || lineCanvas.getBoundingClientRect().width;
+        const h = lineCanvas.clientHeight || lineCanvas.getBoundingClientRect().height;
+        if (w === 0 || h === 0) return;
+
+        lineCanvas.width = w * dpr;
+        lineCanvas.height = h * dpr;
+        const ctx = lineCanvas.getContext("2d");
+        ctx.scale(dpr, dpr);
+
+        const pad = { top: 28, right: 28, bottom: 38, left: 46 };
+        const plotW = w - pad.left - pad.right;
+        const plotH = h - pad.top - pad.bottom;
+
+        const colors = getThemeColors();
+        ctx.clearRect(0, 0, w, h);
+
+        const yMax = Math.ceil((maxVal * 1.15) / 10) * 10 || 10;
+        const steps = 5;
+
+        ctx.font = "500 11px Vazirmatn, Inter, sans-serif";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+
+        for (let i = 0; i <= steps; i++) {
+          const val = Math.round((yMax / steps) * i);
+          const y = pad.top + plotH - (val / yMax) * plotH;
+          ctx.strokeStyle = colors.grid;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, y);
+          ctx.lineTo(w - pad.right, y);
+          ctx.stroke();
+
+          ctx.fillStyle = colors.text;
+          ctx.fillText(val, pad.left - 10, y);
+        }
+
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        linePointsCoords = chartData.map((val, idx) => {
+          const x = chartData.length === 1
+            ? pad.left + plotW / 2
+            : pad.left + (idx / (chartData.length - 1)) * plotW;
+          const animatedVal = val * easeOut;
+          const y = pad.top + plotH - (animatedVal / yMax) * plotH;
+          return { x, y, rawVal: val, label: chartLabels[idx] };
+        });
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        linePointsCoords.forEach((pt) => {
+          ctx.fillStyle = colors.text;
+          ctx.fillText("جلسه " + pt.label, pt.x, pad.top + plotH + 10);
+        });
+
+        if (showAvgLine) {
+          const avgY = pad.top + plotH - ((avgVal * easeOut) / yMax) * plotH;
+          ctx.save();
+          ctx.strokeStyle = "rgba(56, 189, 248, 0.7)";
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([6, 6]);
+          ctx.beginPath();
+          ctx.moveTo(pad.left, avgY);
+          ctx.lineTo(w - pad.right, avgY);
+          ctx.stroke();
+          ctx.fillStyle = "#38bdf8";
+          ctx.textAlign = "left";
+          ctx.fillText(`میانگین: ${avgVal}`, pad.left + 8, avgY - 10);
+          ctx.restore();
+        }
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(pad.left - 5, 0, (plotW + 10) * easeOut, h);
+        ctx.clip();
+
+        function traceLinePath() {
+          ctx.beginPath();
+          linePointsCoords.forEach((pt, i) => {
+            if (i === 0) {
+              ctx.moveTo(pt.x, pt.y);
+            } else if (useSmoothCurve) {
+              const prev = linePointsCoords[i - 1];
+              const cx = (prev.x + pt.x) / 2;
+              ctx.bezierCurveTo(cx, prev.y, cx, pt.y, pt.x, pt.y);
+            } else {
+              ctx.lineTo(pt.x, pt.y);
+            }
+          });
+        }
+
+        if (linePointsCoords.length > 1) {
+          traceLinePath();
+          ctx.lineTo(linePointsCoords[linePointsCoords.length - 1].x, pad.top + plotH);
+          ctx.lineTo(linePointsCoords[0].x, pad.top + plotH);
+          ctx.closePath();
+          const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + plotH);
+          grad.addColorStop(0, "rgba(255, 134, 23, 0.34)");
+          grad.addColorStop(1, "rgba(255, 134, 23, 0.01)");
+          ctx.fillStyle = grad;
+          ctx.fill();
+        }
+
+        traceLinePath();
+        ctx.strokeStyle = colors.accent;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.restore();
+
+        linePointsCoords.forEach((pt, idx) => {
+          const pointThreshold = chartData.length > 1 ? idx / (chartData.length - 1) : 0;
+          if (easeOut < pointThreshold * 0.85) return;
+
+          const isHovered = idx === hoveredLineIndex;
+          if (isHovered) {
+            ctx.save();
+            ctx.strokeStyle = "rgba(255, 134, 23, 0.4)";
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(pt.x, pad.top);
+            ctx.lineTo(pt.x, pad.top + plotH);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, isHovered ? 7 : 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = isHovered ? colors.accent : colors.pointBg;
+          ctx.fill();
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = colors.accent;
+          ctx.stroke();
+
+          ctx.fillStyle = colors.text;
+          ctx.font = "700 11px Vazirmatn, Inter, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(Math.round(pt.rawVal * easeOut), pt.x, pt.y - 14);
+        });
+      }
+
+      function animateLineChartFromZero() {
+        if (!chartData.length) {
+          if (lineContainer) lineContainer.hidden = true;
+          if (lineEmpty) lineEmpty.hidden = false;
+          return;
+        }
+        if (lineContainer) lineContainer.hidden = false;
+        if (lineEmpty) lineEmpty.hidden = true;
+
+        if (lineAnimReq) cancelAnimationFrame(lineAnimReq);
+        const startTime = performance.now();
+        const duration = 1350;
+
+        function step(now) {
+          lineAnimProgress = Math.min(1, (now - startTime) / duration);
+          drawLineFrame(lineAnimProgress);
+          if (lineAnimProgress < 1) {
+            lineAnimReq = requestAnimationFrame(step);
+          }
+        }
+        lineAnimReq = requestAnimationFrame(step);
+      }
+
+      if (lineCanvas) {
+        lineCanvas.addEventListener("mousemove", function (e) {
+          if (!linePointsCoords.length) return;
+          const rect = lineCanvas.getBoundingClientRect();
+          const scaleX = (lineCanvas.clientWidth || rect.width) / (rect.width || 1);
+          const mx = (e.clientX - rect.left) * scaleX;
+          let nearestIdx = -1;
+          let minDist = 9999;
+
+          linePointsCoords.forEach((pt, idx) => {
+            const d = Math.abs(pt.x - mx);
+            if (d < minDist && d < 60) {
+              minDist = d;
+              nearestIdx = idx;
+            }
+          });
+
+          hoveredLineIndex = nearestIdx;
+          drawLineFrame(lineAnimProgress);
+
+          if (nearestIdx !== -1 && lineTooltip) {
+            const pt = linePointsCoords[nearestIdx];
+            const diff = pt.rawVal - avgVal;
+            const diffText = diff >= 0 ? `+${diff} بالاتر از میانگین` : `${diff} پایین‌تر از میانگین`;
+            lineTooltip.innerHTML = `
+              <div class="tt-title">جلسه #${pt.label}</div>
+              <div>تعداد درست: <b>${pt.rawVal}</b></div>
+              <div class="tt-sub">${diffText}</div>
+            `;
+            lineTooltip.style.left = pt.x + "px";
+            lineTooltip.style.top = pt.y + "px";
+            lineTooltip.classList.add("visible");
+          } else if (lineTooltip) {
+            lineTooltip.classList.remove("visible");
+          }
+        });
+
+        lineCanvas.addEventListener("mouseleave", function () {
+          hoveredLineIndex = -1;
+          if (lineTooltip) lineTooltip.classList.remove("visible");
+          drawLineFrame(lineAnimProgress);
+        });
+      }
+
+      document.getElementById("toggleSmoothBtn")?.addEventListener("click", function () {
+        useSmoothCurve = !useSmoothCurve;
+        this.classList.toggle("active", useSmoothCurve);
+        this.textContent = useSmoothCurve ? "🌊 حالت منحنی" : "📐 حالت شکسته";
+        drawLineFrame(lineAnimProgress || 1);
+      });
+
+      document.getElementById("toggleAvgLineBtn")?.addEventListener("click", function () {
+        showAvgLine = !showAvgLine;
+        this.classList.toggle("active", showAvgLine);
+        drawLineFrame(lineAnimProgress || 1);
+      });
+
+      document.getElementById("replayLineChartBtn")?.addEventListener("click", animateLineChartFromZero);
+
+
+      function drawBarFrame(progress) {
+        if (!barCanvas || !chartData.length) return;
+        const dpr = window.devicePixelRatio || 1;
+        const w = barCanvas.clientWidth || barCanvas.getBoundingClientRect().width;
+        const h = barCanvas.clientHeight || barCanvas.getBoundingClientRect().height;
+        if (w === 0 || h === 0) return;
+
+        barCanvas.width = w * dpr;
+        barCanvas.height = h * dpr;
+        const ctx = barCanvas.getContext("2d");
+        ctx.scale(dpr, dpr);
+
+        const pad = { top: 26, right: 20, bottom: 34, left: 40 };
+        const plotW = w - pad.left - pad.right;
+        const plotH = h - pad.top - pad.bottom;
+
+        const colors = getThemeColors();
+        ctx.clearRect(0, 0, w, h);
+
+        const yMax = Math.ceil((maxVal * 1.15) / 10) * 10 || 10;
+        const steps = 4;
+
+        ctx.font = "500 11px Vazirmatn, Inter, sans-serif";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+
+        for (let i = 0; i <= steps; i++) {
+          const val = Math.round((yMax / steps) * i);
+          const y = pad.top + plotH - (val / yMax) * plotH;
+          ctx.strokeStyle = colors.grid;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, y);
+          ctx.lineTo(w - pad.right, y);
+          ctx.stroke();
+
+          ctx.fillStyle = colors.text;
+          ctx.fillText(val, pad.left - 8, y);
+        }
+
+        const slotW = plotW / chartData.length;
+        const barW = Math.min(42, slotW * 0.55);
+        barRects = [];
+
+        chartData.forEach((val, idx) => {
+          const delay = idx * 0.08;
+          const localP = Math.max(0, Math.min(1, (progress - delay) / (1 - delay * 0.7)));
+          const easeP = 1 - Math.pow(1 - localP, 3);
+
+          const currentVal = val * easeP;
+          const barH = (currentVal / yMax) * plotH;
+          const x = pad.left + idx * slotW + (slotW - barW) / 2;
+          const y = pad.top + plotH - barH;
+
+          barRects.push({ x, y, w: barW, h: barH, rawVal: val, label: chartLabels[idx] });
+
+          const isHovered = idx === hoveredBarIndex;
+          const grad = ctx.createLinearGradient(0, y, 0, pad.top + plotH);
+          grad.addColorStop(0, isHovered ? "#ffa347" : "#ff8617");
+          grad.addColorStop(1, isHovered ? "rgba(255, 134, 23, 0.45)" : "rgba(255, 134, 23, 0.16)");
+
+          ctx.fillStyle = grad;
+          ctx.strokeStyle = colors.accent;
+          ctx.lineWidth = isHovered ? 2.2 : 1.4;
+
+          ctx.beginPath();
+          if (ctx.roundRect) {
+            ctx.roundRect(x, y, barW, Math.max(2, barH), [8, 8, 0, 0]);
+          } else {
+            ctx.rect(x, y, barW, Math.max(2, barH));
+          }
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = isHovered ? colors.accent : colors.text;
+          ctx.font = "700 11px Vazirmatn, Inter, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(Math.round(currentVal), x + barW / 2, y - 10);
+
+          ctx.fillStyle = colors.text;
+          ctx.font = "500 11px Vazirmatn, Inter, sans-serif";
+          ctx.fillText("جلسه " + chartLabels[idx], x + barW / 2, pad.top + plotH + 14);
+        });
+      }
+
+      function animateBarChartFromZero() {
+        if (!chartData.length) {
+          if (barContainer) barContainer.hidden = true;
+          if (barEmpty) barEmpty.hidden = false;
+          return;
+        }
+        if (barContainer) barContainer.hidden = false;
+        if (barEmpty) barEmpty.hidden = true;
+
+        if (barAnimReq) cancelAnimationFrame(barAnimReq);
+        const startTime = performance.now();
+        const duration = 1250;
+
+        function step(now) {
+          barAnimProgress = Math.min(1, (now - startTime) / duration);
+          drawBarFrame(barAnimProgress);
+          if (barAnimProgress < 1) {
+            barAnimReq = requestAnimationFrame(step);
+          }
+        }
+        barAnimReq = requestAnimationFrame(step);
+      }
+
+      if (barCanvas) {
+        barCanvas.addEventListener("mousemove", function (e) {
+          const rect = barCanvas.getBoundingClientRect();
+          const scaleX = (barCanvas.clientWidth || rect.width) / (rect.width || 1);
+          const scaleY = (barCanvas.clientHeight || rect.height) / (rect.height || 1);
+          const mx = (e.clientX - rect.left) * scaleX;
+          const my = (e.clientY - rect.top) * scaleY;
+          let found = -1;
+
+          barRects.forEach((b, idx) => {
+            if (mx >= b.x - 8 && mx <= b.x + b.w + 8 && my >= b.y - 20 && my <= b.y + b.h + 10) {
+              found = idx;
+            }
+          });
+
+          hoveredBarIndex = found;
+          drawBarFrame(barAnimProgress);
+
+          if (found !== -1 && barTooltip) {
+            const b = barRects[found];
+            const share = totalVal ? Math.round((b.rawVal / totalVal) * 100) : 0;
+            barTooltip.innerHTML = `
+              <div class="tt-title">جلسه #${b.label}</div>
+              <div>ثبت‌شده: <b>${b.rawVal} درست</b></div>
+              <div class="tt-sub">${share}٪ از کل درست‌های پروژه</div>
+            `;
+            barTooltip.style.left = (b.x + b.w / 2) + "px";
+            barTooltip.style.top = b.y + "px";
+            barTooltip.classList.add("visible");
+          } else if (barTooltip) {
+            barTooltip.classList.remove("visible");
+          }
+        });
+
+        barCanvas.addEventListener("mouseleave", function () {
+          hoveredBarIndex = -1;
+          if (barTooltip) barTooltip.classList.remove("visible");
+          drawBarFrame(barAnimProgress);
+        });
+      }
+
+      document.getElementById("replayBarChartBtn")?.addEventListener("click", animateBarChartFromZero);
+      window.addEventListener("resize", () => {
+        if (lineAnimProgress > 0) drawLineFrame(lineAnimProgress);
+        if (barAnimProgress > 0) drawBarFrame(barAnimProgress);
+      });
+
+      const aiSentences = [
+        `بر پایه تحلیل سری‌های زمانی و شیب نمودار، هوش مصنوعی تخمین می‌زند در جلسه آینده حدود ${avgVal + 4} بار واژه «درست» ثبت شود.`,
+        `الگوریتم شبکه عصبی با بررسی ریتم جلسات اخیر، احتمال عبور از مرز ${avgVal + 7} «درست» در جلسه بعدی را ۸۷٪ پیش‌بینی می‌کند.`,
+        `مدل آماری رگرسیون نشان می‌دهد جلسه آینده یکی از پرچالش‌ترین جلسات خواهد بود و عدد نهایی در بازه ${Math.max(5, avgVal - 3)} تا ${avgVal + 5} نوسان دارد.`,
+        `با توجه به واریانس جلسات گذشته، هسته پردازش هوشمند عدد ${avgVal + 3} را به عنوان محتمل‌ترین رکورد برای جلسه پیش رو ثبت کرد.`,
+        `تحلیل الگوهای تکرار کلامی نشان از یک جهش ناگهانی دارد؛ پیش‌بینی سیستم ثبت حداقل ${avgVal + 9} مورد «درست» در جلسه آتی است.`,
+        `پردازش داده‌های تاریخی تکمیل شد: روند فعلی پایدار ارزیابی می‌شود و تخمین دقیق مدل برای جلسه بعد، عدد ${avgVal + 1} می‌باشد.`,
+        `سیستم یادگیری ماشین با مقایسه اوج‌های قبلی، احتمال ثبت یک رکورد تازه در دقایق میانی جلسه بعد و رسیدن به عدد ${avgVal + 6} را بالا می‌داند.`,
+        `بر اساس ماتریس همبستگی جلسات، تراکم واژه «درست» در جلسه آینده حدود ۱۵٪ رشد خواهد داشت و به حوالی ${Math.round(avgVal * 1.15)} می‌رسد.`,
+        `موتور تحلیلگر رفتاری پیش‌بینی می‌کند جلسه بعدی با ریتمی آرام آغاز شده اما در نیمه دوم با جهش به عدد ${avgVal + 5} ختم شود.`,
+        `نتیجه استنتاج مدل زبانی و آماری: با ضریب اطمینان ۹۱.۴٪، شمارنده جلسه بعد روی عددی نزدیک به ${avgVal + 2} متوقف خواهد شد.`
+      ];
+
+      const aiLoader = document.getElementById("aiLoader");
+      const aiStatusText = document.getElementById("aiStatusText");
+      const aiProgressFill = document.getElementById("aiProgressFill");
+      const aiResult = document.getElementById("aiResult");
+      const aiQuoteText = document.getElementById("aiQuoteText");
+      const aiLatencyText = document.getElementById("aiLatencyText");
+      const aiReanalyzeBtn = document.getElementById("aiReanalyzeBtn");
+
+      let aiTriggered = false;
+      let lastIndex = -1;
+      let aiTimers = [];
+
+      function runAiSimulation() {
+        if (!aiLoader || !aiResult) return;
+        aiTimers.forEach((t) => clearTimeout(t));
+        aiTimers = [];
+
+        aiResult.classList.remove("show");
+        aiLoader.style.display = "flex";
+        aiLoader.style.opacity = "1";
+        aiProgressFill.style.width = "18%";
+        aiStatusText.textContent = "برقراری ارتباط امن با API هوش مصنوعی...";
+
+        aiTimers.push(setTimeout(() => {
+          aiProgressFill.style.width = "62%";
+          aiStatusText.textContent = "واکشی ماتریس جلسات و تحلیل الگوها...";
+        }, 700));
+
+        aiTimers.push(setTimeout(() => {
+          aiProgressFill.style.width = "94%";
+          aiStatusText.textContent = "محاسبه خروجی مدل رگرسیون...";
+        }, 1450));
+
+        aiTimers.push(setTimeout(() => {
+          aiProgressFill.style.width = "100%";
+          aiLoader.style.opacity = "0";
+
+          aiTimers.push(setTimeout(() => {
+            aiLoader.style.display = "none";
+            let randomIndex;
+            do {
+              randomIndex = Math.floor(Math.random() * aiSentences.length);
+            } while (randomIndex === lastIndex && aiSentences.length > 1);
+            lastIndex = randomIndex;
+
+            const fakePing = Math.floor(Math.random() * 95) + 65;
+            aiQuoteText.textContent = aiSentences[randomIndex];
+            aiLatencyText.textContent = `پاسخ از API دریافت شد (${fakePing}ms)`;
+            aiResult.classList.add("show");
+          }, 250));
+        }, 2050));
+      }
+
+      if (aiReanalyzeBtn) {
+        aiReanalyzeBtn.addEventListener("click", runAiSimulation);
+      }
+
+
+      const slides = Array.from(document.querySelectorAll(".snap-slide"));
+      const sideDots = Array.from(document.querySelectorAll(".side-dot"));
+      const navLinks = Array.from(document.querySelectorAll(".topbar .nav-link"));
+      let currentActiveSlideId = "slide-home";
+
+      function activateSlide(slideEl) {
+        if (!slideEl) return;
+        const activeId = slideEl.getAttribute("id");
+        slideEl.classList.add("is-focused");
+
+        sideDots.forEach((dot) => {
+          dot.classList.toggle("active", dot.getAttribute("href") === "#" + activeId);
+        });
+        navLinks.forEach((link) => {
+          link.classList.toggle("active", link.getAttribute("href") === "#" + activeId);
+        });
+
+        if (activeId !== currentActiveSlideId) {
+          currentActiveSlideId = activeId;
+          if (activeId === "slide-linechart") {
+            animateLineChartFromZero();
+          } else if (activeId === "slide-ai") {
+            animateBarChartFromZero();
+            if (!aiTriggered) {
+              aiTriggered = true;
+              runAiSimulation();
+            }
+          }
+        }
+      }
+
+      if ("IntersectionObserver" in window) {
+        const slideObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              activateSlide(entry.target);
+            } else {
+              entry.target.classList.remove("is-focused");
+            }
+          });
+        }, {
+          root: scroller || null,
+          threshold: 0.18
+        });
+
+        slides.forEach((slide) => slideObserver.observe(slide));
+      } else {
+        slides.forEach((slide) => slide.classList.add("is-focused"));
+      }
+
+      if (scroller) {
+        scroller.addEventListener("scroll", function () {
+          const viewportCenter = window.innerHeight / 2;
+          for (const slide of slides) {
+            const rect = slide.getBoundingClientRect();
+            if (rect.top <= viewportCenter && rect.bottom >= viewportCenter) {
+              activateSlide(slide);
+              break;
+            }
+          }
+        }, { passive: true });
+      }
+
+      document.querySelectorAll('a[href^="#slide-"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          const targetId = this.getAttribute("href").slice(1);
+          const targetSlide = document.getElementById(targetId);
+          if (targetSlide) {
+            e.preventDefault();
+            activateSlide(targetSlide);
+            targetSlide.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+
+
+      const roadmapData = [
+        {
+          title: "بخش ۱: آغاز شمارش — جرقه ذهنی ایلیا",
+          tag: "آغازگر پروژه و ایده‌پرداز: ایلیا",
+          body: "هر بنای ماندگاری از یک جرقه در ذهن آغاز می‌شود؛ لحظه‌ای که کنجکاوی ساده به پرسشی کاوشگرانه بدل می‌گردد. نقطه صفر «درست‌سنج» با تمرکز بالا، دقت کم‌نظیر و ذهن پرتوجه ایلیا کلید خورد. او در جریان جلسات متوجه تکرار آهنگین واژه «درست» شد و پیشنهاد داد این پدیده کلامی به یک پروژه شمارش و رصد آماری دقیق تبدیل شود.",
+          tools: ["🧠 ذهن پُرتوجه و تحلیل‌گر", "🎯 دقت و تمرکز بالا", "🔍 تشخیص الگوهای تکرار", "⚡ ایده‌پردازی نقطه صفر"],
+          lineX2: 800
+        },
+        {
+          title: "بخش ۲: جمع‌آوری اطلاعات — چوب‌خط‌های صادق",
+          tag: "ثبت حضوری و گردآوری داده‌ها: صادق",
+          body: "ایده‌ها بی‌حضور داده‌های دقیق، تنها در جهان خیال باقی می‌مانند. صادق در تمام جلسات به صورت حضوری مسلح به کاغذ و قلم نشست و با روش سنتی و اصیل «چوب‌خط‌زنی» (卌)، هر بار که کلمه «درست» بر زبان جاری می‌شد، خطی تازه بر کاغذ نشاند. او علاوه بر شمارش کل جلسه، با دقت لحظه‌نگاری کرد تا رکورد طوفانی‌ترین دقیقه (بیشترین درست در ۱ دقیقه) نیز به ثبت برسد.",
+          tools: ["卌 شمارش چوب‌خطی روی کاغذ", "📝 حضور فیزیکی در جلسات", "⏱️ ثبت رکورد ۱ دقیقه‌ای", "📊 اعتبارسنجی دستی آمار"],
+          lineX2: 533
+        },
+        {
+          title: "بخش ۳: آغاز روند آماده‌سازی — مهندسی فول‌استک کیامهر",
+          tag: "طراحی و توسعه تک‌نفره فرانت‌اند و بک‌اند: کیامهر",
+          body: "زمانی که برگه‌های پر از چوب‌خط آماده شدند، نوبت به خلق کالبدی دیجیتال رسید. کیامهر به تنهایی مسئولیت کامل طراحی رابط کاربری، کدنویسی فرانت‌اند و مهندسی بک‌اند را بر دوش کشید. او با ترکیب قدرت پایتون و جنگو در سمت سرور و ظرافت CSS و جاوااسکریپت در سمت کاربر، سامانه‌ای یکپارچه خلق کرد که اعداد خام کاغذی را به نمودارهایی زنده تبدیل می‌کند.",
+          tools: ["🐍 Python 3 & Django Framework", "🗄️ SQLite Database Modeling", "🎨 Modern UI/UX & CSS3", "📈 Interactive Canvas Charts"],
+          lineX2: 266
+        },
+        {
+          title: "بخش ۴: انتشار و راهبری پروژه — زیرساخت و عبور از تحریم توسط ارشیا",
+          tag: "راهبری ارائه، شبکه P2P و زیرساخت سرور: ارشیا",
+          body: "در ایستگاه پایانی، پروژه نیازمند سناریویی جذاب برای ارائه و زیرساختی پایدار در اینترنت جهانی بود. ارشیا ایده کلی نحوه ارائه اثر را طراحی کرد و زمانی که تحریم‌های بین‌المللی مانع خرید مستقیم سرور و دامنه شدند، با استفاده از شبکه‌های بلاکچین، تراکنش‌های همتا‌به‌همتا (P2P) و واسطه‌های پرداخت ارزی، موانع را دور زد و سرور پروژه را با موفقیت آنلاین کرد.",
+          tools: ["⛓️ Blockchain & Crypto Payments", "🔄 P2P Exchange & Intermediaries", "🌐 Domain & Cloudflare Routing", "🖥️ Linux VPS Deployment"],
+          lineX2: 0
+        }
+      ];
+
+      const stationCards = document.querySelectorAll(".station-card");
+      const stationInspector = document.getElementById("stationInspector");
+      const inspectorTitle = document.getElementById("inspectorTitle");
+      const inspectorTag = document.getElementById("inspectorTag");
+      const inspectorBody = document.getElementById("inspectorBody");
+      const inspectorTools = document.getElementById("inspectorTools");
+      const roadmapProgressLine = document.getElementById("roadmapProgressLine");
+
+      function renderRoadmapStation(index) {
+        const item = roadmapData[index];
+        if (!item) return;
+
+        stationCards.forEach((card, i) => {
+          card.classList.toggle("active", i === index);
+        });
+
+        if (roadmapProgressLine) {
+          roadmapProgressLine.setAttribute("x2", item.lineX2);
+        }
+
+        if (!stationInspector) return;
+        stationInspector.classList.remove("zoom-in");
+        stationInspector.classList.add("zoom-out");
+
+        setTimeout(() => {
+          if (inspectorTitle) inspectorTitle.textContent = item.title;
+          if (inspectorTag) inspectorTag.textContent = item.tag;
+          if (inspectorBody) inspectorBody.textContent = item.body;
+          if (inspectorTools) {
+            inspectorTools.innerHTML = item.tools
+              .map((t) => `<span class="tool-chip">${t}</span>`)
+              .join("");
+          }
+
+          stationInspector.classList.remove("zoom-out");
+          stationInspector.classList.add("zoom-in");
+        }, 200);
+      }
+
+      renderRoadmapStation(0);
+
+      stationCards.forEach((card) => {
+        card.addEventListener("click", function () {
+          const step = parseInt(this.getAttribute("data-step"), 10);
+          renderRoadmapStation(step);
+        });
+      });
+
+      const tableBody = document.getElementById("sessionsTableBody");
+      const searchInput = document.getElementById("tableSearchInput");
+      const sortButtons = document.querySelectorAll("[data-sort]");
+
+      sessionRows.forEach((row) => {
+        const dorost = parseInt(row.dataset.dorost, 10) || 0;
+        const pct = maxVal ? Math.round((dorost / maxVal) * 100) : 0;
+
+        const fillEl = row.querySelector(".mini-progress-fill");
+        const pctTextEl = row.querySelector(".row-pct-text");
+        const statusCell = row.querySelector(".row-status-cell");
+
+        if (fillEl) fillEl.style.width = pct + "%";
+        if (pctTextEl) pctTextEl.textContent = pct + "%";
+
+        if (statusCell) {
+          if (dorost === maxVal && maxVal > 0) {
+            statusCell.innerHTML = `<span class="status-badge status-gold">🏆 رکورددار مطلق</span>`;
+          } else if (dorost >= avgVal) {
+            statusCell.innerHTML = `<span class="status-badge status-hot">🔥 فراتر از میانگین</span>`;
+          } else {
+            statusCell.innerHTML = `<span class="status-badge status-normal">✨ ریتم متعادل</span>`;
+          }
+        }
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener("input", function () {
+          const q = this.value.trim().toLowerCase();
+          sessionRows.forEach((row) => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(q) ? "" : "none";
+          });
+        });
+      }
+
+      sortButtons.forEach((btn) => {
+        btn.addEventListener("click", function () {
+          sortButtons.forEach((b) => b.classList.remove("active"));
+          this.classList.add("active");
+          const sortKey = this.getAttribute("data-sort");
+
+          const sorted = [...sessionRows].sort((a, b) => {
+            const valA = parseInt(a.dataset[sortKey], 10) || 0;
+            const valB = parseInt(b.dataset[sortKey], 10) || 0;
+            return sortKey === "sess" ? valA - valB : valB - valA;
+          });
+
+          if (tableBody) {
+            sorted.forEach((r) => tableBody.appendChild(r));
+          }
+        });
+      });
+
+
+      const copyWalletBtn = document.getElementById("copyWalletBtn");
+      const bnbWalletAddress = document.getElementById("bnbWalletAddress");
+
+      function showCopySuccess() {
+        if (!copyWalletBtn) return;
+        const originalText = copyWalletBtn.dataset.origText || copyWalletBtn.textContent;
+        copyWalletBtn.dataset.origText = originalText;
+        copyWalletBtn.textContent = "✓ کپی شد!";
+        copyWalletBtn.style.background = "#4cd964";
+        setTimeout(() => {
+          copyWalletBtn.textContent = originalText;
+          copyWalletBtn.style.background = "#f3ba2f";
+        }, 2000);
+      }
+
+      if (copyWalletBtn && bnbWalletAddress) {
+        copyWalletBtn.addEventListener("click", function () {
+          const address = bnbWalletAddress.textContent.trim();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(address).then(showCopySuccess).catch(() => {
+              fallbackCopy(address);
+            });
+          } else {
+            fallbackCopy(address);
+          }
+        });
+      }
+
+      function fallbackCopy(text) {
+        const tempInput = document.createElement("textarea");
+        tempInput.value = text;
+        tempInput.style.position = "fixed";
+        tempInput.style.opacity = "0";
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+          document.execCommand("copy");
+          showCopySuccess();
+        } catch (e) {}
+        document.body.removeChild(tempInput);
+      }
+    });
+  </script>
+
+</body>
+</html>
